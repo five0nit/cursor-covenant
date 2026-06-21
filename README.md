@@ -16,10 +16,10 @@ If an agent will move the mouse, click, type into a foreground UI, use UI automa
 2. State what control is needed and for how many seconds.
 3. Give at least a 5-second countdown; use 10 seconds for non-urgent actions.
 4. During the countdown, do not move or click the mouse.
-5. The warning box must be cancellable: double-click the dialog to cancel before control is taken.
+5. The warning box must have a visible **CANCEL MOUSE CONTROL** button that cancels before control is taken; double-clicking the dialog is also a backup cancel gesture.
 6. After the countdown, perform only the announced action.
 7. Release control immediately and report what happened.
-8. If the human moves the mouse, double-clicks cancel, or says stop, abort and re-request a new cursor lease.
+8. If the human moves the mouse, clicks cancel, double-clicks cancel, or says stop, abort and re-request a new cursor lease.
 
 Exception: emergency safety action to stop destructive/unwanted execution. Report immediately afterward.
 

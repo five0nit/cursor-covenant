@@ -33,7 +33,7 @@ $form = New-Object System.Windows.Forms.Form
 $form.Text = 'Cursor Covenant - mouse control warning'
 $form.TopMost = $true
 $form.StartPosition = 'Manual'
-$form.Size = New-Object System.Drawing.Size(940,280)
+$form.Size = New-Object System.Drawing.Size(980,360)
 $form.Location = New-Object System.Drawing.Point(
   [int]($area.Left + ($area.Width - $form.Width) / 2),
   [int]($area.Top + ($area.Height - $form.Height) / 2)
@@ -53,18 +53,42 @@ $form.Add_MouseDoubleClick($cancelAction)
 $label = New-Object System.Windows.Forms.Label
 $label.AutoSize = $false
 $label.Dock = 'Fill'
-$label.Font = New-Object System.Drawing.Font('Segoe UI',24,[System.Drawing.FontStyle]::Bold)
+$label.Font = New-Object System.Drawing.Font('Segoe UI',22,[System.Drawing.FontStyle]::Bold)
 $label.TextAlign = 'MiddleCenter'
 $label.Add_DoubleClick($cancelAction)
 $label.Add_MouseDoubleClick($cancelAction)
+
+$buttonPanel = New-Object System.Windows.Forms.Panel
+$buttonPanel.Dock = 'Bottom'
+$buttonPanel.Height = 86
+$buttonPanel.BackColor = [System.Drawing.Color]::FromArgb(80,10,10)
+
+$cancelButton = New-Object System.Windows.Forms.Button
+$cancelButton.Text = 'CANCEL MOUSE CONTROL'
+$cancelButton.Font = New-Object System.Drawing.Font('Segoe UI',18,[System.Drawing.FontStyle]::Bold)
+$cancelButton.Width = 420
+$cancelButton.Height = 56
+$cancelButton.BackColor = [System.Drawing.Color]::White
+$cancelButton.ForeColor = [System.Drawing.Color]::FromArgb(160,0,0)
+$cancelButton.FlatStyle = 'Flat'
+$cancelButton.Location = New-Object System.Drawing.Point(
+  [int](($form.ClientSize.Width - $cancelButton.Width) / 2),
+  15
+)
+$cancelButton.Anchor = 'Top'
+$cancelButton.Add_Click($cancelAction)
+$buttonPanel.Controls.Add($cancelButton)
+
 $form.Controls.Add($label)
+$form.Controls.Add($buttonPanel)
+$form.CancelButton = $cancelButton
 $form.Show()
 $form.Activate()
 
 $verb = if ($Mode -eq 'Click') { "Clicking at $X,$Y" } else { 'Warning-only test. No mouse action will happen.' }
 for ($i=$Seconds; $i -ge 1; $i--) {
   if ($script:Cancelled) { break }
-  $label.Text = "$Message`n`n$verb`n`nCountdown: $i seconds`n`nDOUBLE-CLICK THIS BOX TO CANCEL."
+  $label.Text = "$Message`n`n$verb`n`nCountdown: $i seconds`n`nClick CANCEL MOUSE CONTROL or double-click this box to abort."
   [System.Windows.Forms.Application]::DoEvents()
   for ($tick=0; $tick -lt 10; $tick++) {
     if ($script:Cancelled) { break }

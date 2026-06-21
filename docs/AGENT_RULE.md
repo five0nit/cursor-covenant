@@ -10,10 +10,10 @@ Before any action that moves the pointer, clicks, types, sends hotkeys, pastes i
 2. State exactly what control is needed and for how long.
 3. Give at least a 5-second countdown; default to 10 seconds.
 4. During the countdown, do not move the pointer, click, type, paste, or send hotkeys.
-5. The warning dialog must be cancellable: double-clicking it cancels the pending mouse/keyboard action.
+5. The warning dialog must have a visible **CANCEL MOUSE CONTROL** button that cancels the pending mouse/keyboard action before control is taken; double-clicking the dialog remains a backup cancel gesture.
 6. Perform only the announced action.
 7. Release control immediately and report the action/result.
-8. If the human moves the mouse, types, double-clicks cancel, or says stop/cancel, abort and reacquire a new cursor lease before trying again.
+8. If the human moves the mouse, types, clicks cancel, double-clicks cancel, or says stop/cancel, abort and reacquire a new cursor lease before trying again.
 
 Exception: emergency action to prevent active destructive/unwanted execution. If used, report immediately afterward.
 
