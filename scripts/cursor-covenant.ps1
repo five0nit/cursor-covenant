@@ -1,5 +1,5 @@
 param(
-  [ValidateSet('WarnOnly','Click')]
+  [ValidateSet('WarnOnly','Click','Keyboard')]
   [string]$Mode = 'WarnOnly',
   [int]$Seconds = 10,
   [int]$X = 0,
@@ -71,13 +71,15 @@ $cancelButton.Height = 56
 $cancelButton.BackColor = [System.Drawing.Color]::White
 $cancelButton.ForeColor = [System.Drawing.Color]::FromArgb(160,0,0)
 $cancelButton.FlatStyle = 'Flat'
-$cancelButton.Location = New-Object System.Drawing.Point(
-  [int](($form.ClientSize.Width - $cancelButton.Width) / 2),
-  15
-)
-$cancelButton.Anchor = 'Top'
+$centerCancelButton = {
+  $cancelButton.Left = [int](($buttonPanel.ClientSize.Width - $cancelButton.Width) / 2)
+  $cancelButton.Top = [int](($buttonPanel.ClientSize.Height - $cancelButton.Height) / 2)
+}
+$buttonPanel.Add_Resize($centerCancelButton)
+$cancelButton.Anchor = 'None'
 $cancelButton.Add_Click($cancelAction)
 $buttonPanel.Controls.Add($cancelButton)
+& $centerCancelButton
 
 $form.Controls.Add($label)
 $form.Controls.Add($buttonPanel)
@@ -85,7 +87,7 @@ $form.CancelButton = $cancelButton
 $form.Show()
 $form.Activate()
 
-$verb = if ($Mode -eq 'Click') { "Clicking at $X,$Y" } else { 'Warning-only test. No mouse action will happen.' }
+$verb = if ($Mode -eq 'Click') { "Clicking at $X,$Y" } elseif ($Mode -eq 'Keyboard') { 'Keyboard/hotkey/paste control will be used after countdown.' } else { 'Warning-only test. No mouse or keyboard action will happen.' }
 for ($i=$Seconds; $i -ge 1; $i--) {
   if ($script:Cancelled) { break }
   $label.Text = "$Message`n`n$verb`n`nCountdown: $i seconds`n`nClick CANCEL MOUSE CONTROL or double-click this box to abort."
@@ -112,8 +114,13 @@ if ($script:Cancelled) {
   [CursorCovenantNative]::mouse_event([CursorCovenantNative]::LEFTUP,0,0,0,[UIntPtr]::Zero)
   Start-Sleep -Seconds 2
   $result = "cursor_covenant_clicked x=$X y=$Y seconds=$Seconds"
+} elseif ($Mode -eq 'Keyboard') {
+  $label.Text = "Keyboard control claimed.`nAgent may now type/paste/send hotkeys. Closing..."
+  [System.Windows.Forms.Application]::DoEvents()
+  Start-Sleep -Seconds 2
+  $result = "cursor_covenant_keyboard_claimed seconds=$Seconds"
 } else {
-  $label.Text = 'Cursor Covenant test complete - no mouse action happened. Closing...'
+  $label.Text = 'Cursor Covenant test complete - no mouse or keyboard action happened. Closing...'
   [System.Windows.Forms.Application]::DoEvents()
   Start-Sleep -Seconds 2
   $result = "cursor_covenant_warn_only seconds=$Seconds"

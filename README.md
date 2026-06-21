@@ -37,6 +37,12 @@ Claim cursor then click:
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\cursor-covenant.ps1 -Seconds 10 -Mode Click -X 1000 -Y 700 -Message "Hermes needs the mouse for Codex SEND. Please do not touch mouse/keyboard."
 ```
 
+Keyboard/hotkey/paste claim, no automated keypress by the helper:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\cursor-covenant.ps1 -Seconds 10 -Mode Keyboard -Message "Hermes needs keyboard control to paste into Codex. Please do not touch mouse/keyboard."
+```
+
 Install helper to a per-user tools folder:
 
 ```powershell
