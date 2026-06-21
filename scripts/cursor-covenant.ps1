@@ -43,23 +43,42 @@ $form.ForeColor = [System.Drawing.Color]::White
 $form.FormBorderStyle = 'FixedDialog'
 $form.ShowInTaskbar = $true
 
+$script:Cancelled = $false
+$cancelAction = {
+  $script:Cancelled = $true
+}
+$form.Add_DoubleClick($cancelAction)
+$form.Add_MouseDoubleClick($cancelAction)
+
 $label = New-Object System.Windows.Forms.Label
 $label.AutoSize = $false
 $label.Dock = 'Fill'
 $label.Font = New-Object System.Drawing.Font('Segoe UI',24,[System.Drawing.FontStyle]::Bold)
 $label.TextAlign = 'MiddleCenter'
+$label.Add_DoubleClick($cancelAction)
+$label.Add_MouseDoubleClick($cancelAction)
 $form.Controls.Add($label)
 $form.Show()
 $form.Activate()
 
 $verb = if ($Mode -eq 'Click') { "Clicking at $X,$Y" } else { 'Warning-only test. No mouse action will happen.' }
 for ($i=$Seconds; $i -ge 1; $i--) {
-  $label.Text = "$Message`n`n$verb`n`nCountdown: $i seconds"
+  if ($script:Cancelled) { break }
+  $label.Text = "$Message`n`n$verb`n`nCountdown: $i seconds`n`nDOUBLE-CLICK THIS BOX TO CANCEL."
   [System.Windows.Forms.Application]::DoEvents()
-  Start-Sleep -Seconds 1
+  for ($tick=0; $tick -lt 10; $tick++) {
+    if ($script:Cancelled) { break }
+    Start-Sleep -Milliseconds 100
+    [System.Windows.Forms.Application]::DoEvents()
+  }
 }
 
-if ($Mode -eq 'Click') {
+if ($script:Cancelled) {
+  $label.Text = 'CANCELLED - no mouse or keyboard action happened. Closing...'
+  [System.Windows.Forms.Application]::DoEvents()
+  Start-Sleep -Seconds 2
+  $result = "cursor_covenant_cancelled mode=$Mode seconds=$Seconds"
+} elseif ($Mode -eq 'Click') {
   $label.Text = "Cursor claimed. Clicking now.`nKeep hands off for 2 more seconds."
   [System.Windows.Forms.Application]::DoEvents()
   [CursorCovenantNative]::SetCursorPos($X,$Y) | Out-Null
